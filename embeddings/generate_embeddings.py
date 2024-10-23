@@ -2,7 +2,7 @@
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.http import models as qdrant_models
-from data.load_data import load_documents
+from embeddings.load_data import load_documents
 import os
 
 def generate_and_upload_embeddings():

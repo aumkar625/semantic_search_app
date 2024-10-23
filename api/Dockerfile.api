@@ -1,0 +1,29 @@
+# api/Dockerfile.api
+FROM python:3.9-slim
+
+# Set environment variables
+ENV TRANSFORMERS_CACHE=/app/cache/huggingface/transformers
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Create cache directory
+RUN mkdir -p /app/cache/huggingface/transformers
+
+# Copy application code
+COPY . .
+
+# Expose the API port
+EXPOSE 8000
+
+# Start the FastAPI application using Uvicorn
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]

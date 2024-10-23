@@ -1,7 +1,39 @@
-# docker-compose.yml
-version: '3.9'
+version: '3.8'
 
 services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.api
+    container_name: semantic_search_app_api_container
+    environment:
+      - QDRANT_URL=http://qdrant:6333  # Correct service name
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - TRANSFORMERS_CACHE=/app/cache/huggingface/transformers
+    ports:
+      - "8000:8000"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+      - transformers_cache:/app/cache/huggingface/transformers
+    depends_on:
+      - qdrant
+    networks:
+      - semantic_search_network
+
+  app:
+    build:
+      context: ./semantic-search-ui
+      dockerfile: Dockerfile
+    container_name: semantic_search_ui_container
+    environment:
+      - REACT_APP_API_URL=/api
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - semantic_search_network
+
   qdrant:
     image: qdrant/qdrant
     container_name: qdrant
@@ -9,31 +41,13 @@ services:
       - "6333:6333"
     volumes:
       - qdrant_storage:/qdrant/storage
+    networks:
+      - semantic_search_network
 
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile.api
-    container_name: api
-    depends_on:
-      - qdrant
-    environment:
-      - OPENAI_API_KEY="omkar"
-      - QDRANT_URL=http://qdrant:6333
-    ports:
-      - "8000:8000"
-
-  ui:
-    build:
-      context: .
-      dockerfile: Dockerfile.ui
-    container_name: ui
-    depends_on:
-      - api
-    environment:
-      - API_URL=http://api:8000
-    ports:
-      - "5001:5000"
+networks:
+  semantic_search_network:
+    driver: bridge
 
 volumes:
   qdrant_storage:
+  transformers_cache:

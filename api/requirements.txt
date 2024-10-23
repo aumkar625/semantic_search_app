@@ -3,10 +3,8 @@ uvicorn
 sentence-transformers
 qdrant-client
 transformers
-torch
-scikit-learn
 flask
 requests
 openai
 pytest
-datasets
+google-generativeai
