@@ -1,7 +1,17 @@
 # data/load_data.py
-from sklearn.datasets import fetch_20newsgroups
+from datasets import load_dataset
 
 def load_documents():
-    newsgroups = fetch_20newsgroups(subset='all')
-    documents = newsgroups.data
+    dataset = load_dataset('squad', split='train')
+    documents = []
+
+    for item in dataset:
+        context = item['context']
+        question = item['question']
+        answer = item['answers']['text'][0]  # Taking the first answer
+
+        # Combine the context, question, and answer into a single document
+        document = f"Context: {context}\nQuestion: {question}\nAnswer: {answer}"
+        documents.append(document)
+
     return documents

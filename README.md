@@ -113,3 +113,21 @@ pip install pytest
 
 pytest tests/
 
+# test api 
+curl -X POST "http://0.0.0.0:8000/search" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "query": "What is the capital of France?",
+           "k": 2 
+         }'
+         
+curl -X POST "http://0.0.0.0:8000/search" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "query": "what is Bhagavad-Gita",
+           "k": 5,
+           "summarizer": "facebook/bart-large-cnn"
+         }'
+
+
+

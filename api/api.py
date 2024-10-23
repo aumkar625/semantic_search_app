@@ -30,7 +30,7 @@ async def search(request: SearchRequest):
 
     # Perform the search
     search_result = qdrant_client.search(
-        collection_name='newsgroups',
+        collection_name='squad_dataset_questions_answers',  # Updated collection name
         query_vector=query_embedding,
         limit=request.k
     )

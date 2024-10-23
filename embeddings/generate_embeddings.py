@@ -16,18 +16,18 @@ def generate_and_upload_embeddings():
     embeddings = embedding_model.encode(documents, show_progress_bar=True)
 
     # Initialize Qdrant client
-    qdrant_url = os.getenv('QDRANT_URL', 'http://localhost:6333')
+    qdrant_url = os.getenv('QDRANT_URL', 'http://qdrant:6333')
     qdrant_client = QdrantClient(url=qdrant_url)
 
     # Define a collection in Qdrant
     qdrant_client.recreate_collection(
-        collection_name='newsgroups',
+        collection_name='squad_dataset_questions_answers',
         vectors_config=qdrant_models.VectorParams(size=embeddings.shape[1], distance='Cosine')
     )
 
     # Upload documents and embeddings
     qdrant_client.upload_collection(
-        collection_name='newsgroups',
+        collection_name='squad_dataset_questions_answers',
         vectors=embeddings,
         payload=[{'text': doc} for doc in documents],
         ids=None,

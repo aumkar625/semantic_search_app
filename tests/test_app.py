@@ -1,5 +1,5 @@
 # tests/test_app.py
-from app import app
+from ui import app
 import pytest
 
 @pytest.fixture

@@ -18,7 +18,7 @@ services:
     depends_on:
       - qdrant
     environment:
-      - OPENAI_API_KEY="omkar"
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
       - QDRANT_URL=http://qdrant:6333
     ports:
       - "8000:8000"
@@ -26,14 +26,14 @@ services:
   ui:
     build:
       context: .
-      dockerfile: Dockerfile.ui
+      dockerfile: Dockerfile.app
     container_name: ui
     depends_on:
       - api
     environment:
       - API_URL=http://api:8000
     ports:
-      - "5001:5000"
+      - "5000:5000"
 
 volumes:
   qdrant_storage:

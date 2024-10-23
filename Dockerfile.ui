@@ -1,0 +1,22 @@
+# Dockerfile.ui
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ui ./ui
+
+
+ENV PYTHONPATH=/app
+
+EXPOSE 5000
+
+
+CMD ["python", "ui/run.py"]
+
+#docker build -t semantic_search_app_ui -f Dockerfile.app .
+#docker run -d --name semantic_search_app_ui_container -p 5000:5000 -e API_URL=http://0.0.0.0:8000 semantic_search_app_ui
+#docker logs -f semantic_search_app_ui_container
+#docker-compose logs -f ui
