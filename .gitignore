@@ -1,0 +1,71 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Virtual Environments
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Environments
+.env
+.env.*
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Pytest cache
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# macOS
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Docker
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# Mypy
+.mypy_cache/
+
+# Bandit
+.bandit/
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Database files
+*.sqlite3
+
+# Node modules (if applicable)
+node_modules/
+
+# Local configuration files
+config.yaml
