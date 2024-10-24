@@ -7,16 +7,11 @@ services:
       dockerfile: Dockerfile.api
     container_name: semantic_search_app_api_container
     environment:
-      - QDRANT_URL=http://qdrant:6333  # Correct service name
+      - QDRANT_URL=http://qdrant:6333
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - TRANSFORMERS_CACHE=/app/cache/huggingface/transformers
     ports:
       - "8000:8000"
-    volumes:
-      - qdrant_storage:/qdrant/storage
-      - transformers_cache:/app/cache/huggingface/transformers
-    depends_on:
-      - qdrant
     networks:
       - semantic_search_network
 
@@ -29,25 +24,17 @@ services:
       - REACT_APP_API_URL=/api
     ports:
       - "80:80"
-    depends_on:
-      - api
     networks:
-      - semantic_search_network
+      - semantic_search_network  # Ensure same network as `api`
 
   qdrant:
     image: qdrant/qdrant
     container_name: qdrant
     ports:
       - "6333:6333"
-    volumes:
-      - qdrant_storage:/qdrant/storage
     networks:
       - semantic_search_network
 
 networks:
   semantic_search_network:
     driver: bridge
-
-volumes:
-  qdrant_storage:
-  transformers_cache:

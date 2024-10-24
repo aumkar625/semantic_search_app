@@ -10,6 +10,7 @@ const SearchForm = ({ onResults }) => {
   const [error, setError] = useState(null);
 
   const API_URL = process.env.REACT_APP_API_URL || '/api';
+  console.log("The API URL: ", `${API_URL}`);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,21 +30,33 @@ const SearchForm = ({ onResults }) => {
     setLoading(true);
 
     try {
-      const response = await axios.post(`/search`, {
+      // Prepare request payload
+      let requestPayload = {
         query: query,
         k: k,
-      });
+      };
+
+      // Include summarizer field only if "Show Summary" is checked
+      if (showSummary) {
+        requestPayload.summarizer = "True";
+      }
+
+      // Log the payload to verify
+      console.log('Request payload:', requestPayload);
+
+      // Make API request using axios
+      const response = await axios.post(`${API_URL}/api/search`, requestPayload);
 
       // Process response based on selected options
       const data = response.data;
       const results = {
         documents: showList ? data.documents : [],
-        summary: showSummary ? data.summary : '',
+        summary: showSummary ? data.summary : '', // Only show summary if "Show Summary" is checked
       };
 
       onResults(results);
     } catch (err) {
-      console.error(err);
+      console.log('API Request failed: ', err);
       setError('An error occurred while fetching the results.');
     } finally {
       setLoading(false);
