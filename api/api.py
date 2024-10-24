@@ -121,20 +121,23 @@ async def search(request: SearchRequest):
 
     try:
         # Extract the documents
-        docs = [hit.payload.get('text', '') for hit in search_result]
+        docs = [(hit.payload.get('text', ''),hit.payload.get('file_path')) for hit in search_result]
         logger.info(f"Extracted {len(docs)} documents from search results.")
     except Exception as e:
         logger.error(f"Error extracting documents: {e}")
         raise HTTPException(status_code=500, detail="Failed to extract documents from search results.")
 
     summary = ''
+    # divide the response
+    summary_docs = [doc[0] for doc in docs]
+    response_docs = [doc[0] + '\n file path:' + doc[1] for doc in docs]
     if request.summarizer:
         try:
             # Summarize the results
-            summary = summarize(docs, request.summarizer).text
+            summary = summarize(summary_docs, request.summarizer).text
             logger.info(f"Summary generated successfully {summary}.")
         except Exception as e:
             logger.error(f"Error during summarization: {e}")
             # Depending on requirements, you can choose to fail the request or proceed without summary
             raise HTTPException(status_code=500, detail="Failed to generate summary.")
-    return SearchResponse(documents=docs, summary=summary)
+    return SearchResponse(documents=response_docs, summary=summary)
