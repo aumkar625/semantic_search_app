@@ -1,0 +1,14 @@
+FROM python:3.9-slim
+
+# Install dependencies
+RUN pip install qdrant-client datasets
+
+# Copy the Python script and QdrantUtils
+COPY file_uploader_to_qdrant.py /app/file_uploader_to_qdrant.py
+COPY qdrant_utils.py /app/qdrant_utils.py
+
+# Set the working directory
+WORKDIR /app
+
+# Run the Python script when the container starts
+CMD ["python", "file_uploader_to_qdrant.py"]

@@ -25,7 +25,7 @@ services:
     ports:
       - "80:80"
     networks:
-      - semantic_search_network  # Ensure same network as `api`
+      - semantic_search_network
 
   qdrant:
     image: qdrant/qdrant
@@ -34,6 +34,20 @@ services:
       - "6333:6333"
     networks:
       - semantic_search_network
+
+  uploader:
+    build:
+      context: ./uploader
+      dockerfile: Dockerfile.uploader
+    container_name: file_uploader_to_qdrant
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+    volumes:
+      - ./data:/mnt/data  # Mount directory with CSV files
+    networks:
+      - semantic_search_network
+    depends_on:
+      - qdrant
 
 networks:
   semantic_search_network:

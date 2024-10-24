@@ -1,5 +1,5 @@
 from sentence_transformers import SentenceTransformer
-from qdrant_client import QdrantClient, QdrantClientException
+from qdrant_client.http.exceptions import ApiException, ResponseHandlingException, UnexpectedResponse
 
 
 class QdrantUtils:
@@ -43,7 +43,7 @@ class QdrantUtils:
 
         except ValueError as ve:
             print(f"Value error during search: {str(ve)}")
-        except QdrantClientException as qe:
+        except ApiException as qe:
             print(f"Qdrant client error: {str(qe)}")
         except Exception as e:
             print(f"Unexpected error during search: {str(e)}")
@@ -136,7 +136,7 @@ class QdrantUtils:
 
         except ValueError as ve:
             print(f"Value error during count: {str(ve)}")
-        except QdrantClientException as qe:
+        except ResponseHandlingException as qe:
             print(f"Qdrant client error during count: {str(qe)}")
         except Exception as e:
             print(f"Unexpected error during count operation: {str(e)}")
