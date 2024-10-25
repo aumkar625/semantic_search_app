@@ -14,7 +14,6 @@ env.bak/
 venv.bak/
 
 # Environments
-.env
 .env.*
 .env.local
 .env.development
@@ -39,6 +38,10 @@ venv.bak/
 # Logs
 logs/
 *.log
+
+# Text and CSV files
+*.txt
+*.csv
 
 # Docker
 *.pid
@@ -69,3 +72,6 @@ node_modules/
 
 # Local configuration files
 config.yaml
+
+# Zip files
+*.zip

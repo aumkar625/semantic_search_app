@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+sentence-transformers
+qdrant-client
+transformers
+flask
+requests
+openai
+pytest
+google-generativeai

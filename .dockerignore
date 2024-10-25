@@ -32,6 +32,7 @@ Dockerfile.*
 logs/
 *.log
 *.tmp
+*.csv
 
 # Exclude other unnecessary files
 *.swp
@@ -39,21 +40,8 @@ logs/
 *.old
 *.orig
 
+# Exclude folders 'log'
+log/
 
 # Exclude any files or directories starting with #
-# This addresses files or directories named '#'
-# Exclude files or directories named '#'
-# If you have any files or directories named '#', exclude them
-# Use a glob pattern to exclude any file or directory named '#'
-#
-# The following line excludes any file or directory named '#'
-#
-
-# Exclude files named '#' (hash symbol)
 \#
-
-# Alternatively, to exclude any files or directories that start with '#':
-# If you suspect there are files or directories starting with '#', use:
-#
-# Exclude files or directories starting with '#'
-# \#*
