@@ -44,6 +44,9 @@ const SearchForm = ({ onResults }) => {
       // Log the payload to verify
       console.log('Request payload:', requestPayload);
 
+      //log url to verify
+      console.log('Request payload:', API_URL);
+
       // Make API request using axios
       const response = await axios.post(`${API_URL}/api/search`, requestPayload);
 

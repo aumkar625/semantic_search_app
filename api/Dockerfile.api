@@ -5,6 +5,7 @@ FROM python:3.9-slim
 ENV TRANSFORMERS_CACHE=/app/cache/huggingface/transformers
 ENV PYTHONUNBUFFERED=1
 
+# Set working directory
 WORKDIR /app
 
 # Install system dependencies
@@ -16,11 +17,14 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Create cache directory
+# Create cache directory for transformers
 RUN mkdir -p /app/cache/huggingface/transformers
 
-# Copy application code
-COPY . .
+# Copy the application code into /app directory
+COPY api.py /app/
+COPY abstract /app/abstract
+COPY log /app/log
+COPY services /app/services
 
 # Expose the API port
 EXPOSE 8000

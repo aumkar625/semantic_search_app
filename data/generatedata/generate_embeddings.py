@@ -1,8 +1,5 @@
 # data/generate_embeddings.py
-from sentence_transformers import SentenceTransformer
-from qdrant_client import QdrantClient
-from qdrant_client.http import models as qdrant_models
-from data.load_data import load_documents
+from data.generatedata.load_data import load_documents
 import os
 
 def generate_and_upload_embeddings():
@@ -21,7 +18,7 @@ def generate_and_upload_embeddings():
 
     # Define a collection in Qdrant
     qdrant_client.recreate_collection(
-        collection_name='squad_dataset_questions_answers',
+        collection_name=os.getenv('TABLE'),
         vectors_config=qdrant_models.VectorParams(size=embeddings.shape[1], distance='Cosine')
     )
 
@@ -41,7 +38,7 @@ from qdrant_client import QdrantClient
 from qdrant_client.http import models as qdrant_models
 
 # Generate data using a pre-trained model
-embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+embedding_model = os.getenv("SENTENCE_TRANSFORMER")
 
 
 def upload_csv_to_qdrant(input_dir, csv_file, qdrant_client, collection_name):

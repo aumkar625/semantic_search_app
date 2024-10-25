@@ -9,7 +9,10 @@ services:
     environment:
       - QDRANT_URL=http://qdrant:6333
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL_SUMMARY=${GEMINI_MODEL_SUMMARY}
+      - SENTENCE_TRANSFORMER=${SENTENCE_TRANSFORMER}
       - TRANSFORMERS_CACHE=/app/cache/huggingface/transformers
+      - TABLE=${TABLE}
     ports:
       - "8000:8000"
     networks:
@@ -37,11 +40,13 @@ services:
 
   uploader:
     build:
-      context: ./uploader
+      context: ./data
       dockerfile: Dockerfile.uploader
     container_name: file_uploader_to_qdrant
     environment:
       - QDRANT_URL=http://qdrant:6333
+      - SENTENCE_TRANSFORMER=${SENTENCE_TRANSFORMER}
+      - TABLE=${TABLE}
     volumes:
       - ./data:/mnt/data  # Mount directory with CSV files
     networks:

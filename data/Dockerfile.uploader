@@ -1,14 +1,28 @@
 FROM python:3.9-slim
 
-# Install dependencies
-RUN pip install qdrant-client datasets
+# Install curl, zip, and any other necessary system dependencies
+RUN apt-get update && apt-get install -y curl unzip && rm -rf /var/lib/apt/lists/*
 
-# Copy the Python script and QdrantUtils
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the Python scripts and QdrantUtils
 COPY file_uploader_to_qdrant.py /app/file_uploader_to_qdrant.py
+COPY scheduler.py /app/scheduler.py
 COPY qdrant_utils.py /app/qdrant_utils.py
+
+# Create the required directory structure
+RUN mkdir -p /mnt/data/files
+
+# Copy the zip file and entrypoint script
+COPY files/squad_csv_files.zip /mnt/data/files/
+COPY files/squad_csv_files_subset.zip /mnt/data/files/
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 # Set the working directory
 WORKDIR /app
 
-# Run the Python script when the container starts
-CMD ["python", "file_uploader_to_qdrant.py"]
+# Set entrypoint to the shell script
+ENTRYPOINT ["/app/entrypoint.sh"]
