@@ -45,9 +45,10 @@ const Results = ({ results }) => {
               <li key={index}>
                 <p><strong>Document {startIndex + index + 1}:</strong></p>
                 <p><strong>Score:</strong> {doc.score ? doc.score.toFixed(4) : "N/A"}</p> {/* Display document score */}
+                <p><strong>File Path:</strong> {doc.payload.file_path || "N/A"}</p> {/* Display file path */}
                 <div style={{ whiteSpace: 'pre-wrap', marginBottom: '10px' }}>
-                  {/* Ensure doc.text is a string before calling split */}
-                  {(typeof doc.text === 'string' ? doc.text : "").split('\n').map((line, i) => (
+                  {/* Ensure doc.payload.text is a string before calling split */}
+                  {(typeof doc.payload.text === 'string' ? doc.payload.text : "").split('\n').map((line, i) => (
                     <p key={i}>{line}</p>
                   ))}
                 </div>

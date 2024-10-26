@@ -1,10 +1,27 @@
+# services/search_service.py
+
+import logging
 from abstract.search_service_base import SearchServiceBase
-from services.service_factory import get_vector_db_service, get_embedding_service
+from abstract.vector_db_base import VectorDBBase
+import services.logger_base  # Ensure logging is configured
+
+logger = logging.getLogger(__name__)
+
 
 class SearchService(SearchServiceBase):
-    def __init__(self):
-        self.vector_db_service = get_vector_db_service()
-        self.embedding_service = get_embedding_service()
+    """Service for performing vector-based searches."""
 
-    def search(self, query_embedding, k: int):
-        return self.vector_db_service.search(query_embedding, k)
+    def __init__(self, vector_db_service: VectorDBBase):
+        self.vector_db_service = vector_db_service
+        logger.info("SearchService initialized.")
+
+    async def search(self, query_embedding, k: int):
+        """Performs a search using the vector database service."""
+        try:
+            # Directly await the async method
+            results = await self.vector_db_service.search(query_embedding, k)
+            logger.debug("Search completed.")
+            return results
+        except Exception as e:
+            logger.error(f"Error during search: {e}", exc_info=True)
+            raise

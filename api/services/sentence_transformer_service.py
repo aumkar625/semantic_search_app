@@ -1,16 +1,30 @@
-import os
+# services/sentence_transformer_service.py
+
 import logging
+import os
+import asyncio
+
 from sentence_transformers import SentenceTransformer
 from abstract.embedding_base import EmbeddingServiceBase
+import services.logger_base  # Ensure logging is configured
 
 logger = logging.getLogger(__name__)
 
+
 class SentenceTransformerEmbeddingService(EmbeddingServiceBase):
+    """Service for generating embeddings using SentenceTransformer."""
+
     def __init__(self):
         model_name = os.getenv("SENTENCE_TRANSFORMER")
         self.model = SentenceTransformer(model_name)
-        logger.info("SentenceTransformer model initialized.")
+        logger.info(f"SentenceTransformer model initialized with model: {model_name}")
 
-    def generate_embedding(self, text: str):
-        return self.model.encode(text)
-
+    async def generate_embedding(self, text: str):
+        """Generates an embedding for the given text."""
+        try:
+            embedding = await asyncio.to_thread(self.model.encode, text)
+            logger.debug("Generated embedding for text.")
+            return embedding
+        except Exception as e:
+            logger.error(f"Error generating embedding: {e}", exc_info=True)
+            raise

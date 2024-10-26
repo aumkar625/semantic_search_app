@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile.api
     container_name: semantic_search_app_api_container
     environment:
+      - DEBUG=${DEBUG}
       - QDRANT_URL=http://qdrant:6333
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - GEMINI_MODEL_SUMMARY=${GEMINI_MODEL_SUMMARY}
