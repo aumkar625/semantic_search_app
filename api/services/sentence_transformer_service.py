@@ -15,8 +15,9 @@ class SentenceTransformerEmbeddingService(EmbeddingServiceBase):
     """Service for generating embeddings using SentenceTransformer."""
 
     def __init__(self):
-        model_name = os.getenv("SENTENCE_TRANSFORMER")
-        self.model = SentenceTransformer(model_name)
+        model_name = os.getenv("SENTENCE_TRANSFORMER", "default-model-name")
+        cache_folder = os.getenv("TRANSFORMERS_CACHE", "/tmp/cache")
+        self.model = SentenceTransformer(model_name, cache_folder=cache_folder)
         logger.info(f"SentenceTransformer model initialized with model: {model_name}")
 
     async def generate_embedding(self, text: str):

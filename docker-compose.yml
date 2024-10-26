@@ -18,6 +18,8 @@ services:
       - "8000:8000"
     networks:
       - semantic_search_network
+    depends_on:
+      - qdrant
 
   app:
     build:
@@ -54,6 +56,28 @@ services:
       - semantic_search_network
     depends_on:
       - qdrant
+
+  # Add the tests service
+  tests:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.test
+    container_name: semantic_search_app_api_tests_container
+    environment:
+      - DEBUG=${DEBUG}
+      - QDRANT_URL=http://qdrant:6333
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL_SUMMARY=${GEMINI_MODEL_SUMMARY}
+      - SENTENCE_TRANSFORMER=${SENTENCE_TRANSFORMER}
+      - TRANSFORMERS_CACHE=/app/cache/huggingface/transformers
+      - TABLE=${TABLE}
+    networks:
+      - semantic_search_network
+    depends_on:
+      - api
+      - qdrant
+      - uploader
+    command: ["pytest", "tests"]
 
 networks:
   semantic_search_network:

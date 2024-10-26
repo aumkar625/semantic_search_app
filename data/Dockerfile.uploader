@@ -1,3 +1,4 @@
+# data/Dockerfile.uploader
 FROM python:3.9-slim
 
 # Install curl, zip, and any other necessary system dependencies

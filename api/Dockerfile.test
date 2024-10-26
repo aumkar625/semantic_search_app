@@ -1,0 +1,41 @@
+# api/Dockerfile.test
+
+# Use the same base image as your Dockerfile.api
+FROM python:3.9-slim-bullseye
+
+# Create cache directories with appropriate permissions
+RUN mkdir -p /tmp/cache /tmp/huggingface /app/cache && chmod -R 777 /tmp/cache /tmp/huggingface /app/cache
+
+# Set environment variables
+ENV TRANSFORMERS_CACHE="/tmp/cache" \
+    HF_HOME="/tmp/huggingface" \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH="/app:${PYTHONPATH}"
+
+# Create a non-root user and group
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install dependencies
+COPY --chown=appuser:appgroup requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install testing dependencies
+RUN pip install --no-cache-dir pytest pytest-asyncio httpx
+
+# Copy the application code
+COPY --chown=appuser:appgroup . /app
+
+# Set the user to the created non-root user
+USER appuser
+
+# Run tests
+CMD ["pytest", "tests"]
