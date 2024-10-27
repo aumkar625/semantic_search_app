@@ -43,11 +43,12 @@ class SummarizationService(SummarizationBase):
             # Combine texts into a single text block, adding distinct separation
             text = '\n\n'.join(texts)[:3000]  # Adjust length as needed to fit context
             logger.debug(f"Input text for summarization: {text}")
+            logger.debug(f"The question is: {question}")
 
             # Construct a prompt emphasizing a targeted, relevant summary
             prompt = (
-                f"From the documents below, summarize the content that best answers the question. "
-                f"Focus only on relevant information and avoid adding anything extra.\n\n"
+                f"From the documents below, summarize the content that best answers the question shared with tag question: from content with tag as Documents: "
+                f"Focus only on relevant information and avoid adding anything extra and a.\n\n"
                 f"Question: {question}\n"
                 f"Documents:\n{text}\n\n"
                 f"Provide the best summary answer based solely on the provided documents."

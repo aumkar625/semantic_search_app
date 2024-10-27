@@ -9,10 +9,12 @@ from services.sentence_transformer_service import SentenceTransformerEmbeddingSe
 from services.summarization_service import SummarizationService
 from services.document_formatter import DocumentFormatter
 from services.search_service import SearchService
+from services.prompt_service import FilePromptService
 from abstract.vector_db_base import VectorDBBase
 from abstract.embedding_base import EmbeddingServiceBase
 from abstract.summarization_base import SummarizationBase
-import services.logger_base  # Ensure logging is configured
+from abstract.prompt_base import PromptBase
+import services.logger_base
 
 logger = logging.getLogger(__name__)
 
@@ -63,3 +65,13 @@ def get_format_service() -> DocumentFormatter:
     """Provides the document formatter service."""
     logger.info("Initializing DocumentFormatter.")
     return DocumentFormatter()
+
+@lru_cache()
+def get_prompt_service() -> PromptBase:
+    """Get the prompt service instance based on environment configuration."""
+    prompt_service_type = os.getenv("PROMPT_SERVICE_TYPE", "file")
+    if prompt_service_type == "file":
+        logger.info("Initializing FilePromptService.")
+        return FilePromptService()
+    else:
+        raise ValueError(f"Unsupported PROMPT_SERVICE_TYPE: {prompt_service_type}")
