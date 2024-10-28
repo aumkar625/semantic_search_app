@@ -1,0 +1,44 @@
+# data/Dockerfile.uploader
+
+FROM python:3.9-slim
+
+# Install necessary system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create a non-root user and group
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+
+# Add this line to set the PYTHONPATH
+ENV PYTHONPATH=/app
+
+# Create the required directory structure and set permissions
+RUN mkdir -p /app /mnt/data/files /mnt/data/log /home/appuser \
+    && chown -R appuser:appgroup /app /mnt/data /home/appuser
+
+
+# Set the working directory
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY --chown=appuser:appgroup requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install testing dependencies
+RUN pip install --no-cache-dir pytest
+
+# Copy the application code and tests
+COPY --chown=appuser:appgroup . /app
+
+# Set the user to the non-root user
+USER appuser
+
+RUN chmod +x /app/entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/app/entrypoint.sh"]

@@ -1,0 +1,50 @@
+# Use a specific version of Python base image for consistency
+FROM python:3.9-slim-bullseye
+
+# Set labels for metadata
+LABEL maintainer="Your Name <your.email@example.com>"
+LABEL version="1.0"
+LABEL description="Semantic Search API"
+
+# Set environment variables
+ENV TRANSFORMERS_CACHE=/app/cache/huggingface/transformers \
+    PYTHONUNBUFFERED=1
+
+# Create a non-root user and group before installing dependencies
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements.txt first to leverage Docker cache
+COPY --chown=appuser:appgroup requirements.txt /app/
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the application code into /app directory
+COPY --chown=appuser:appgroup . /app
+
+# Ensure the non-root user owns the application directory
+RUN chown -R appuser:appgroup /app
+
+# Switch to the non-root user
+USER appuser
+
+# Expose the API port
+EXPOSE 8000
+
+# Set the entrypoint
+ENTRYPOINT ["uvicorn"]
+
+# Start the FastAPI application using Uvicorn
+CMD ["my_app:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# Healthcheck to verify that the service is running
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD curl -f http://localhost:8000/health || exit 1
