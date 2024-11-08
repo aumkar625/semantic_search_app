@@ -9,12 +9,13 @@ from qdrant_utils import QdrantUtils  # Import only the QdrantUtils class
 
 
 class FileUploaderToQdrant:
-    def __init__(self, qdrant_url, mounted_dir, checklist_file="uploaded_files_checklist.txt"):
-        self.qdrant_utils = QdrantUtils(qdrant_url)
+    def __init__(self, qdrant_url, mounted_dir, qdrant_api_key, checklist_file="uploaded_files_checklist.txt"):
+        self.qdrant_utils = QdrantUtils(qdrant_url,qdrant_api_key)
         self.qdrant_url = qdrant_url
         self.mounted_dir = mounted_dir
         self.checklist_file = os.path.join(mounted_dir, "log", checklist_file)
         self.collection_name = os.getenv('TABLE')
+        self.qdrant_api_key= os.getenv('QDRANT_API_KEY')
 
         try:
             self.embedding_model = SentenceTransformer(os.environ["SENTENCE_TRANSFORMER"])
@@ -78,18 +79,18 @@ class FileUploaderToQdrant:
     def delete_from_qdrant(self, file_path):
         """Deletes records from Qdrant based on the file path and logs document counts."""
         try:
-            count_before = self.qdrant_utils.get_document_count(self.collection_name)
+            count_before = self.qdrant_utils.get_document_count(self.collection_name,self.qdrant_api_key)
             self.logger.info(f"Document count before deletion: {count_before}")
 
             self.logger.info(f"Deleting records from Qdrant with file path: {file_path}")
-            success = self.qdrant_utils.delete_points_by_file_path(self.qdrant_url, self.collection_name, file_path)
+            success = self.qdrant_utils.delete_points_by_file_path( self.collection_name, file_path, self.qdrant_api_key)
             if success:
                 self.logger.info(f"Successfully deleted records for {file_path} from Qdrant.")
             else:
                 self.logger.error(f"Failed to delete records for {file_path} from Qdrant.")
 
             time.sleep(1)
-            count_after = self.qdrant_utils.get_document_count(self.collection_name)
+            count_after = self.qdrant_utils.get_document_count(self.collection_name, self.qdrant_api_key)
             self.logger.info(f"Document count after deletion: {count_after}")
 
         except Exception as e:
@@ -98,7 +99,7 @@ class FileUploaderToQdrant:
     def upload_file_to_qdrant(self, csv_file):
         """Uploads the contents of a CSV file to the Qdrant collection and logs document counts."""
         try:
-            count_before = self.qdrant_utils.get_document_count(self.collection_name)
+            count_before = self.qdrant_utils.get_document_count(self.collection_name, self.qdrant_api_key)
             self.logger.info(f"Document count before upload: {count_before}")
 
             documents, document_ids = [], []
@@ -117,7 +118,7 @@ class FileUploaderToQdrant:
             self.logger.info(f"Uploaded {len(documents)} documents to Qdrant collection: {self.collection_name}")
 
             time.sleep(1)
-            count_after = self.qdrant_utils.get_document_count(self.collection_name)
+            count_after = self.qdrant_utils.get_document_count(self.collection_name,self.qdrant_api_key)
             self.logger.info(f"Document count after upload: {count_after}")
 
             self.update_checklist(os.path.basename(csv_file))
@@ -156,7 +157,8 @@ class FileUploaderToQdrant:
 
 if __name__ == "__main__":
     qdrant_url = os.getenv('QDRANT_URL', 'http://localhost:6333')
+    qdrant_api_key = os.getenv('QDRANT_API_KEY', '')
     mounted_dir = "/mnt/data/"
 
-    uploader = FileUploaderToQdrant(qdrant_url=qdrant_url, mounted_dir=mounted_dir)
+    uploader = FileUploaderToQdrant(qdrant_url=qdrant_url, mounted_dir=mounted_dir,qdrant_api_key=qdrant_api_key)
     uploader.manual_trigger_sync()

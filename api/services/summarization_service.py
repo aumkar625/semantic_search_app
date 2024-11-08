@@ -48,7 +48,7 @@ class SummarizationService(SummarizationBase):
             # Construct a prompt emphasizing a targeted, relevant summary
             prompt = (
                 f"From the documents below, summarize the content that best answers the question shared with tag question: from content with tag as Documents: "
-                f"Focus only on relevant information and avoid adding anything extra and a.\n\n"
+                f"Focus only on relevant information and avoid adding anything extra and the.\n\n"
                 f"Question: {question}\n"
                 f"Documents:\n{text}\n\n"
                 f"Provide the best summary answer based solely on the provided documents."

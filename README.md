@@ -51,7 +51,7 @@ The project consists of multiple Dockerized services orchestrated using Docker C
    
 ## Services Overview
 1. **Qdrant (Vector Database)**
-    Description: A vector database service that stores embeddings for the dataset. Running on a single node for simplicity.
+    Description: A vector database service that stores embeddings for the dataset. Running on a single node for simplicity.We are using a qdarnt cloud instance for this,you create a free instance for the demo and use https://qdrant.tech/
     Technology: Qdrant
 2. **API Service**
      Description: A FastAPI application that receives user queries, generates embeddings, searches Qdrant for top K documents, and optionally summarizes the results using a language model.
@@ -177,7 +177,8 @@ Sample Response:
 ## Configuration
 ***Environment Variables (.env)***
 
-    QDRANT_URL=http://qdrant:6333
+    QDRANT_URL={QDRANT_URL}
+    QDRANT_API_KEY=QDRANT_API_KEY
     GEMINI_API_KEY=your_gemini_api_key
     GEMINI_MODEL_SUMMARY=gemini-1.5-flash
     SENTENCE_TRANSFORMER=all-MiniLM-L6-v2

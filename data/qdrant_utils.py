@@ -8,10 +8,12 @@ from qdrant_client.http import models as qdrant_models
 from requests.exceptions import HTTPError, RequestException
 
 class QdrantUtils:
-    def __init__(self, qdrant_url):
+    def __init__(self, qdrant_url, qdrant_api_key):
         self.qdrant_url = qdrant_url
-        self.qdrant_client = QdrantClient(url=qdrant_url)
+        self.qdrant_api_key = qdrant_api_key
+        self.qdrant_client = QdrantClient(url=qdrant_url,api_key=qdrant_api_key)
         self.logger = logging.getLogger(__name__)
+        self.logger.info(f"the args are {self.qdrant_url},{self.qdrant_api_key}")
 
     def create_collection_if_not_exists(self, collection_name, vector_size, distance='Cosine'):
         """Creates a collection in Qdrant if it does not exist."""
@@ -49,10 +51,11 @@ class QdrantUtils:
             self.logger.error(f"Error uploading documents to collection '{collection_name}': {str(e)}")
             raise
 
-    def delete_points_by_file_path(self, qdrant_url, collection_name, file_path, max_retries=3, backoff_factor=2):
+    def delete_points_by_file_path(self, collection_name, file_path, api_key, max_retries=3, backoff_factor=2):
         """Deletes points from a Qdrant collection based on file_path filter using HTTP POST."""
-        scroll_url = f"{qdrant_url}/collections/{collection_name}/points/scroll"
-        delete_url = f"{qdrant_url}/collections/{collection_name}/points/delete"
+        scroll_url = f"{self.qdrant_url}/collections/{collection_name}/points/scroll"
+        delete_url = f"{self.qdrant_url}/collections/{collection_name}/points/delete"
+        headers = {"Content-Type": "application/json", "api-key": api_key}
         search_payload = {
             "filter": {
                 "must": [
@@ -73,7 +76,7 @@ class QdrantUtils:
 
         for attempt in range(1, max_retries + 1):
             try:
-                response = requests.post(scroll_url, json=search_payload, timeout=10)
+                response = requests.post(scroll_url, headers=headers, json=search_payload, timeout=10)
                 response.raise_for_status()
                 scroll_data = response.json()
 
@@ -111,10 +114,10 @@ class QdrantUtils:
         self.logger.error("Max retries exceeded. Deletion failed.")
         return False
 
-    def get_document_count(self, collection_name, max_retries=3, backoff_factor=2):
+    def get_document_count(self, collection_name, api_key, max_retries=3, backoff_factor=2):
         """Fetch the document count for a specified collection with retry logic and exception handling."""
         url = f"{self.qdrant_url}/collections/{collection_name}/points/count"
-        headers = {"Content-Type": "application/json"}
+        headers = {"Content-Type": "application/json", "api-key": api_key}
         payload = {"exact": True}
 
         for attempt in range(1, max_retries + 1):

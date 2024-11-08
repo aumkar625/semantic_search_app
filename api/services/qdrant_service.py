@@ -15,10 +15,11 @@ class QdrantService(VectorDBBase):
     """Service for interacting with Qdrant vector database."""
 
     def __init__(self):
-        qdrant_url = os.getenv("QDRANT_URL")
+        self.qdrant_url = os.getenv("QDRANT_URL")
         self.collection_name = os.getenv('TABLE')
-        self.client = QdrantClient(url=qdrant_url)
-        logger.info(f"Qdrant client initialized with URL: {qdrant_url}")
+        self.qdrant_api_key = os.getenv("QDRANT_API_KEY")
+        self.client = QdrantClient(url=self.qdrant_url, api_key=self.qdrant_api_key)
+        logger.info(f"Qdrant client initialized with URL: {self.qdrant_url}")
 
     async def search(self, query_embedding, k: int):
         """Performs a search in the Qdrant database."""

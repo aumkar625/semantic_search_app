@@ -10,6 +10,7 @@ from file_uploader_to_qdrant import FileUploaderToQdrant
 qdrant_url = os.getenv('QDRANT_URL', 'http://localhost:6333')
 mounted_dir = "/mnt/data/"  # Ensure this path is where your CSV files are mounted
 log_dir = os.path.join(mounted_dir, "log")
+qdrant_api_key = os.getenv('QDRANT_API_KEY', '')
 os.makedirs(log_dir, exist_ok=True)
 
 # Set up logging to 'service.log' in the log directory
@@ -25,7 +26,7 @@ logger = logging.getLogger(__name__)
 RUN_INTERVAL = 10  # Run interval in seconds
 
 # Initialize the FileUploaderToQdrant
-uploader = FileUploaderToQdrant(qdrant_url=qdrant_url, mounted_dir=mounted_dir)
+uploader = FileUploaderToQdrant(qdrant_url=qdrant_url, mounted_dir=mounted_dir,qdrant_api_key=qdrant_api_key)
 
 def scheduled_job():
     """Function that runs the job."""
